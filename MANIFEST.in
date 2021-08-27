@@ -1,0 +1,4 @@
+include README.md
+recursive-include octoprint_TemperatureLimiter/templates *
+recursive-include octoprint_TemperatureLimiter/translations *
+recursive-include octoprint_TemperatureLimiter/static *

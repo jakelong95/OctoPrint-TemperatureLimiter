@@ -5,12 +5,31 @@ import time
 import octoprint.plugin
 from octoprint.util import RepeatedTimer
 
-class TemperaturelimiterPlugin(octoprint.plugin.StartupPlugin):
+class TemperaturelimiterPlugin(octoprint.plugin.StartupPlugin,
+                               octoprint.plugin.ShutdownPlugin):
 
-    ##~~ StartupPlugin hooks
+    def __init__(self):
+        self.updateTimer = None
+
+    def startTimer(self):
+        self._logger.info(u"Starting timer")
+        self.updateTimer = RepeatedTimer(1, self.timerCheck)
+        self.updateTimer.start()
+
+    def timerCheck(self):
+        self._logger.info(u"Timer triggered")
+
+
+    ##~~ StartupPlugin hook
 
     def on_after_startup(self):
         self._logger.info(u"Starting up Temperature Limiter")
+        self.startTimer()
+
+    ##~~ ShutdownPlugin hook
+
+    def on_shutdown(self):
+        self._logger.info(u"Shutting down Temerature Limiter")
 
     ##~~ Softwareupdate hook
 

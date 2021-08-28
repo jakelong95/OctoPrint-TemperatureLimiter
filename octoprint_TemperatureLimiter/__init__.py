@@ -17,8 +17,20 @@ class TemperaturelimiterPlugin(octoprint.plugin.StartupPlugin,
         self.updateTimer.start()
 
     def timerCheck(self):
-        self._logger.info(u"Timer triggered")
+        temps = self._printer.get_current_temperatures()
+        self._logger.info(u"Current temperatures: %r" % temps)
 
+        if not temps:
+            return
+
+        # Check the bed temp
+        if temps["bed"]["actual"] >= 100:
+            self._logger.warn("Bed temperature %r above threshold!" % temps["bed"]["actual"])
+
+        # Check the tool temps
+        for k in temps.keys():
+            if k.startswith("tool") and temps[k]["actual"] >= 280:
+                self._logger.warn("Tool %r temperature %r above threshold!" % (k, temps[k]["actual"]))
 
     ##~~ StartupPlugin hook
 
